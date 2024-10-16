@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Effect Fullscreen</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      height: 200vh; 
+    }
+
+   
+    .typing-container {
+      height: 100vh; 
+      display: flex;
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      color: #333;
+      border-right: 2px solid;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 0.75s step-end infinite;
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: black; }
+    }
+
+
+    .nav-bar {
+      position: fixed;
+      top: 0;
+      left: 0; 
+      right: 0; 
+      padding: 1rem;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.8); 
+      border-radius: 5px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+    }
+
+    .nav-bar img {
+      height: 70px; 
+    }
+
+    .nav-bar a {
+      margin-left: 20px;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-bar a:hover {
+      text-decoration: underline;
+    }
+
+
+    section {
+      width: 100%;
+      padding: 4rem 2rem;
+      background-color: #f8f8f8;
+      text-align: center;
+      margin: 2rem 0; 
+      border-radius: 8px;
+    }
+
+    .scroll-prompt {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      color: #333;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    .scroll-prompt:hover {
+      text-decoration: underline;
+    }
+
+    .pdf-link {
+      margin-top: 20px; 
+      font-size: 1.5rem;
+      color: #080809; 
+      text-decoration: none; 
+    }
+
+    .pdf-link:hover {
+      text-decoration: underline; 
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="nav-bar">
+    <img src="/Users/aaravjhawar/Downloads/WhatsApp Image 2024-10-17 at 00.40.08.jpeg" alt="Logo">
+    <div>
+      <a href="#about-us" onclick="showSection('about-us')">About Us</a>
+      <a href="#contact-us" onclick="showSection('contact-us')">Contact Us</a>
+    </div>
+  </div>
+
+
+  <div class="typing-container">
+    <span class="typing-effect"></span>
+   
+    <a href="upload.html" class="pdf-link">Try our PDF-reader</a>
+  </div>
+
+  
+  <div class="scroll-prompt" onclick="showSection('about-us')">
+    Scroll down to learn more...
+  </div>
+
+
+  <section id="about-us">
+    <h2>About Us</h2>
+    <p>We are a group of six dedicated students passionate about learning, collaboration, and creativity.</p>
+    <p> Coming from diverse academic backgrounds, each of us brings unique skills and perspectives to our projects.</p>
+    <p> Our common goal is to excel both in and outside the classroom by working together, supporting one another, and tackling challenges with curiosity and determination.</p>
+    <p>Whether it’s academic research, group assignments, or extracurricular activities, we strive to foster an environment of innovation, teamwork, and growth.</p>
+    <p> Together, we believe that our combined efforts can lead to meaningful accomplishments and shared success.</p>
+  </section>
+
+  
+  <section id="contact-us">
+    <h2>Contact Us</h2>
+    <p>
+      <ul>
+        <li>Aarav Jhawar: aaravjhawar578@gmail.com</li>
+        <li>Rudra Satwik: rudrasatwik@gmail.com</li>
+        <li>Hussein Alokwala: husseinakolawala5@gmail.com</li>
+        <li>Zorawar Singh: sjorawar037@gmail.com</li>
+        <li>Lakshya Chandhoke:lakshyachandhoke@gmail.com</li>
+      </ul>
+    </p>
+  </section>
+
+  <script>
+    const typingText = "Welcome to J.HARL";
+    const typingSpeed = 100; 
+    const delayBeforeRestart = 2000; 
+
+    let index = 0;
+    const typingEffect = document.querySelector(".typing-effect");
+
+    function type() {
+      if (index < typingText.length) {
+        typingEffect.textContent += typingText.charAt(index);
+        index++;
+        setTimeout(type, typingSpeed);
+      } else {
+        setTimeout(() => {
+          typingEffect.textContent = "";
+          index = 0;
+          type();
+        }, delayBeforeRestart);
+      }
+    }
+
+   
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('section');
+      sections.forEach(section => {
+        section.style.display = 'none'; 
+      });
+      const selectedSection = document.getElementById(sectionId);
+      selectedSection.style.display = 'block';
+      selectedSection.scrollIntoView({ behavior: 'smooth' }); 
+    }
+
+    window.onload = type;
+  </script>
+
+</body>
+</html>

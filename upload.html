@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comet Animation with PDF Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #000000, #2e003e); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 20%, 100% { opacity: 0.2; }
+            10%, 30% { opacity: 1; }
+        }
+
+        .comet {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 15px; 
+            height: 15px; 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            animation: comet-animation 4s linear infinite;
+        }
+
+        @keyframes comet-animation {
+            0% {
+                left: -15px;
+                top: 0;
+            }
+            100% {
+                left: 100vw; 
+                top: 100vh; 
+            }
+        }
+
+        .upload-container {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.9); 
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 450px;
+            text-align: center;
+            padding: 40px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .file-drop-area {
+            border: 2px dashed #3f51b5;
+            border-radius: 10px;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+            background-color: #f1f1ff;
+            color: #3f51b5;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-drop-area:hover {
+            background-color: #e3e3ff;
+        }
+
+        .file-drop-area img {
+            width: 60px;
+            margin-bottom: 10px;
+        }
+
+        .file-drop-area p {
+            font-size: 16px;
+            color: #3f51b5;
+        }
+
+        .file-drop-area input {
+            display: none;
+        }
+
+        button {
+            background-color: #3f51b5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #5c6bc0;
+        }
+
+        .upload-message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .format-info {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .format-info span {
+            color: #3f51b5;
+        }
+
+        .pdf-preview {
+            margin-top: 20px;
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="stars"></div> 
+<div class="comet"></div> 
+<div class="upload-container">
+    <h1>Upload PDF Document</h1>
+    <form id="pdfUploadForm" method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit()">
+        <div class="file-drop-area" onclick="document.getElementById('pdfFile').click()">
+            <img src="https://cdn-icons-png.flaticon.com/512/3361/3361437.png" alt="Upload Icon">
+            <p>Drag and Drop file here or <label for="pdfFile" style="cursor:pointer; color:#3f51b5; text-decoration: underline;">Choose file</label></p>
+            <input type="file" name="pdfFile" id="pdfFile" accept="application/pdf" required>
+        </div>
+        <button type="submit">Upload</button>
+    </form>
+    <div class="upload-message" id="uploadMessage"></div>
+    <div class="format-info">Supported format: <span>PDF</span></div>
+    <div class="format-info">Maximum size: <span>25MB</span></div>
+    <iframe class="pdf-preview" id="pdfPreview" src="" frameborder="0"></iframe>
+</div>
+
+<script>
+
+    function createStars() {
+        const starsContainer = document.querySelector('.stars');
+        for (let i = 0; i < 100; i++) { 
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 3 + 1; 
+            const left = Math.random() * 100; 
+            const top = Math.random() * 100; 
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${left}vw`;
+            star.style.top = `${top}vh`;
+            star.style.animationDuration = `${Math.random() * 2 + 1}s`;
+            star.style.animationDelay = `${Math.random() * 2}s`; 
+            starsContainer.appendChild(star);
+        }
+    }
+
+    createStars();
+
+    const fileDropArea = document.querySelector('.file-drop-area');
+    const fileInput = document.getElementById('pdfFile');
+    const uploadMessage = document.getElementById('uploadMessage');
+    const pdfPreview = document.getElementById('pdfPreview');
+
+    fileDropArea.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            uploadMessage.innerHTML = `Selected file: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                pdfPreview.src = e.target.result; 
+                pdfPreview.style.display = 'block'; 
+            }
+            reader.readAsDataURL(file); 
+        }
+    });
+
+    function handleSubmit() {
+        const formData = new FormData(document.getElementById('pdfUploadForm'));
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Upload failed');
+            }
+        })
+        .then(data => {
+            
+            window.location.href = `/result.html?filename=${data.filename}`; 
+        })
+        .catch(error => {
+            uploadMessage.innerHTML = `Error: ${error.message}`;
+        });
+
+        
+        return false; 
+    }
+</script>
+
+</body>
+</html>
